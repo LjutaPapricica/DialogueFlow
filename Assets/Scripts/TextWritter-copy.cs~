@@ -1,0 +1,90 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using TMPro;
+
+namespace DialogueFlow {
+  [RequireComponent(typeof(TextMeshProUGUI))]
+  public class TextTypeWritter : MonoBehaviour, ITextAnimator {
+    public float letterDuration;
+
+    private string currentText;
+    private string targetText;
+
+    private bool animating = false;
+    private float timer;
+
+    private TextMeshProUGUI messageText;
+
+    public System.Action OnComplete {
+      get; set;
+    }
+
+    private void Awake() {
+      messageText = GetComponent<TextMeshProUGUI>();
+    }
+
+    public void Enable() {
+      enabled = true;
+    }
+
+    public void Disable() {
+      enabled = false;
+    }
+
+    public void SetText(string text) {
+      currentText = messageText.text = "";
+      targetText = text;
+    }
+
+    public void StartAnimating() {
+      currentText = messageText.text = "";
+      animating = true;
+    }
+
+    private void Update() {
+      if (!animating) {
+        return;
+      }
+      while (currentText != targetText) {
+        if (Input.GetButtonDown("Submit")) {
+          currentText = targetText;
+          messageText.text = currentText;
+          break;
+        }
+        if (timer > 0.0f) {
+          timer -= Time.deltaTime;
+          break;
+        } else {
+          timer = letterDuration;
+        }
+        int nextI = currentText.Length;
+        string nextChar = targetText[nextI].ToString();
+        if (nextChar == "<") {
+          int j = nextI + 1;
+          string temp = nextChar;
+          while (j < targetText.Length) {
+            if (targetText[j] != ' ') {
+              temp += targetText[j];
+            } else {
+              break;
+            }
+            if (targetText[j] == '>') {
+              nextChar = temp;
+              break;
+            }
+            j++;
+          }
+        }
+        currentText += nextChar;
+        messageText.text = currentText;
+      }
+      if (currentText == targetText) {
+        animating = false;
+        if (OnComplete != null) {
+          OnComplete();
+        }
+      }
+    }
+  }
+}
