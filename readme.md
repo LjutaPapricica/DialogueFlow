@@ -1,5 +1,6 @@
 # How to install
 Copy the Assets folder to somewhere inside your projects Assets folder. You may rename the folder to whatever you'd like. The Examples folder is optional.
+It also requires [Text Mesh Pro](https://assetstore.unity.com/packages/essentials/beta-projects/textmesh-pro-84126)
 
 # About
 **Dialogue Flow** is a tool to create quick dialogues in Unity 2018 (untested in older versions)
